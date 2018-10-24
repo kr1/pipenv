@@ -74,11 +74,12 @@ class Mercurial(VersionControl):
 
     def get_revision(self, location):
         current_revision = self.run_command(
-            ['parents', '--template={rev}'],
+            ['parents', '--template={node}'],
             show_stdout=False, cwd=location).strip()
         return current_revision
 
-    def get_revision_hash(self, location):
+    def get_revision_sha(self, location, rev=None):
+        # the rev arg is not currently used for mercurial
         current_rev_hash = self.run_command(
             ['parents', '--template={node}'],
             show_stdout=False, cwd=location).strip()
@@ -91,7 +92,7 @@ class Mercurial(VersionControl):
         egg_project_name = dist.egg_name().split('-', 1)[0]
         if not repo:
             return None
-        current_rev_hash = self.get_revision_hash(location)
+        current_rev_hash = self.get_revision_sha(location)
         return '%s@%s#egg=%s' % (repo, current_rev_hash, egg_project_name)
 
     def is_commit_id_equal(self, dest, name):
