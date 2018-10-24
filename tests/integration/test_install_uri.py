@@ -57,6 +57,20 @@ def test_ssh_vcs_install(PipenvInstance, pip_src_dir, pypi):
             "ref": "15e31431af97e5e64b80af0a3f598d382bcdd49a",
         }
 
+@pytest.mark.vcs
+@pytest.mark.install
+@pytest.mark.needs_internet
+@flaky
+def test_mercurial_vcs_install(PipenvInstance, pip_src_dir, pypi):
+    with PipenvInstance(pypi=pypi, chdir=True) as p:
+        c = p.pipenv("install -e hg+https://www.mercurial-scm.org/repo/python-hglib/@b8edcb693518#egg=hglib")
+        assert c.return_code == 0
+        assert "hglib" in p.pipfile["packages"]
+        assert "hg" in p.pipfile["packages"]["hglib"]
+        assert (p.lockfile["default"]["hglib"]['hg'] ==
+            "https://www.mercurial-scm.org/repo/python-hglib/")
+        assert p.lockfile["default"]["hglib"]['ref'] == "b8edcb6935186a5f31c459b03818220b3152559e"
+
 
 @pytest.mark.files
 @pytest.mark.urls
